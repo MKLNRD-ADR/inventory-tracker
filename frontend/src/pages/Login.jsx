@@ -16,7 +16,7 @@ function Login() {
       localStorage.setItem('token', res.data.token);
       message.success('Logged in successfully');
       navigate('/dashboard');
-    } catch (err) {
+    } catch {
       message.error('Invalid username or password');
     } finally {
       setLoading(false);

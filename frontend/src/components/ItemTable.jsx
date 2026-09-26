@@ -14,7 +14,7 @@ function ItemTable({ onDataChange }) {
     try {
       const res = await api.get('/items');
       setItems(res.data);
-    } catch (err) {
+    } catch {
       message.error('Failed to load items');
     } finally {
       setLoading(false);
@@ -22,7 +22,11 @@ function ItemTable({ onDataChange }) {
   };
 
   useEffect(() => {
-    fetchItems();
+    const timer = setTimeout(() => {
+      fetchItems();
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const openAddModal = () => {
@@ -41,7 +45,7 @@ function ItemTable({ onDataChange }) {
       message.success('Item deleted');
       fetchItems();
       onDataChange?.();
-    } catch (err) {
+    } catch {
       message.error('Failed to delete item');
     }
   };

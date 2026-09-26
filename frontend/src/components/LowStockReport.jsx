@@ -13,7 +13,7 @@ function LowStockReport({ refreshKey }) {
     try {
       const res = await api.get('/items/report/low-stock');
       setItems(res.data);
-    } catch (err) {
+    } catch {
       message.error('Failed to load report');
     } finally {
       setLoading(false);
@@ -21,7 +21,11 @@ function LowStockReport({ refreshKey }) {
   };
 
   useEffect(() => {
-    fetchReport();
+    const timer = setTimeout(() => {
+      fetchReport();
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [refreshKey]);
 
   const downloadPDF = () => {
