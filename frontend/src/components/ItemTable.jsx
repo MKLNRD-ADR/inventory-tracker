@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Table, Button, message, Space, Popconfirm } from 'antd';
+import { Table, Button, message, Space, Popconfirm, Input, Select } from 'antd';
 import api from '../api/axios';
 import ItemFormModal from './ItemFormModal';
 
@@ -8,6 +8,8 @@ function ItemTable({ onDataChange }) {
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [searchText, setSearchText] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState(undefined);
 
   const fetchItems = async () => {
     setLoading(true);
@@ -50,6 +52,19 @@ function ItemTable({ onDataChange }) {
     }
   };
 
+  const categories = [...new Set(items.map((item) => item.category).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b));
+
+  const filteredItems = items.filter((item) => {
+    const searchValue = searchText.trim().toLowerCase();
+    const matchesSearch = !searchValue
+      || item.name?.toLowerCase().includes(searchValue)
+      || item.sku?.toLowerCase().includes(searchValue);
+    const matchesCategory = !categoryFilter || item.category === categoryFilter;
+
+    return matchesSearch && matchesCategory;
+  });
+
   const columns = [
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'SKU', dataIndex: 'sku', key: 'sku' },
@@ -84,13 +99,30 @@ function ItemTable({ onDataChange }) {
 
   return (
     <>
-      <Button type="primary" onClick={openAddModal} style={{ marginBottom: 16 }}>
-        Add Item
-      </Button>
+      <Space wrap style={{ marginBottom: 16 }}>
+        <Button type="primary" onClick={openAddModal}>
+          Add Item
+        </Button>
+        <Input
+          allowClear
+          placeholder="Search name or SKU"
+          value={searchText}
+          onChange={(event) => setSearchText(event.target.value)}
+          style={{ width: 220 }}
+        />
+        <Select
+          allowClear
+          placeholder="Filter by category"
+          value={categoryFilter}
+          onChange={setCategoryFilter}
+          options={categories.map((category) => ({ label: category, value: category }))}
+          style={{ width: 180 }}
+        />
+      </Space>
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={items}
+        dataSource={filteredItems}
         loading={loading}
         pagination={{ position: ['bottomCenter'] }}
       />
