@@ -21,6 +21,9 @@ const createItem = async (req, res) => {
     res.status(201).json({ message: 'Item created successfully' });
   } catch (err) {
     console.error(err);
+    if (err.number === 2601 || err.number === 2627) {
+      return res.status(409).json({ message: 'SKU already exists' });
+    }
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -36,6 +39,9 @@ const getItems = async (req, res) => {
     res.json(result.recordset);
   } catch (err) {
     console.error(err);
+    if (err.number === 2601 || err.number === 2627) {
+      return res.status(409).json({ message: 'SKU already exists' });
+    }
     res.status(500).json({ message: 'Server error' });
   }
 };

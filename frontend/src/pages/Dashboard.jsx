@@ -27,9 +27,9 @@ function Dashboard() {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1677ff' }}>
         <Title level={3} style={{ color: 'white', margin: 0 }}>Inventory Tracker</Title>
-        <Button onClick={handleLogout}>Log Out</Button>
+        <Button type="primary" danger onClick={handleLogout}>Log Out</Button>
       </Header>
       <Content style={{ padding: '24px' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>

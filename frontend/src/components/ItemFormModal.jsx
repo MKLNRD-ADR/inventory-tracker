@@ -7,12 +7,14 @@ function ItemFormModal({ open, onClose, onSuccess, editingItem }) {
   const { message } = AntdApp.useApp();
 
   useEffect(() => {
+    if (!open) return;
+
     if (editingItem) {
       form.setFieldsValue(editingItem);
     } else {
       form.resetFields();
     }
-  }, [editingItem, form]);
+  }, [editingItem, form, open]);
 
   const handleOk = async () => {
     try {
@@ -30,7 +32,7 @@ function ItemFormModal({ open, onClose, onSuccess, editingItem }) {
       onClose();
     } catch (err) {
       if (err.errorFields) return;
-      message.error('Something went wrong');
+      message.error(err.response?.data?.message || 'Something went wrong');
     }
   };
 

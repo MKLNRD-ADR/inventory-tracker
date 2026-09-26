@@ -83,7 +83,7 @@ function LowStockReport({ refreshKey }) {
   return (
     <>
       <Space wrap style={{ marginBottom: 16 }}>
-        <Button onClick={downloadPDF} disabled={filteredItems.length === 0}>
+        <Button type="primary" onClick={downloadPDF} disabled={filteredItems.length === 0}>
           Download PDF
         </Button>
         <Input
