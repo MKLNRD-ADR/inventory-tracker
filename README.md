@@ -25,7 +25,7 @@ cd inventory-tracker
 ### 2. Database setup
 Create a database named `InventoryTrackerDB` in SQL Server, then select that database and run the SQL in `database/schema.sql`. The script creates the `Users` and `Items` tables.
 
-For SQL Server Express, make sure TCP/IP is enabled and note the TCP port assigned to your SQL Server instance. The backend connects using the server address and port from the `.env` file.
+For SQL Server Express, make sure TCP/IP is enabled and note the TCP port your instance is using. If you're using a fresh SQL Server Express install with a dynamic port, you may want to set a fixed TCP port in SQL Server Configuration Manager (TCP/IP Properties > IP Addresses > IPAll) for a more reliable connection.
 
 You'll also need at least one user in the `Users` table to log in with. Passwords are stored as bcrypt hashes, not plain text. You can use this ready-made insert statement, it creates a user `admin` with the password `test123`:
 
@@ -44,7 +44,7 @@ Create a `.env` file inside the `backend` folder:
 
 ```env
 DB_SERVER=localhost
-DB_PORT=1433
+DB_PORT=your_sql_server_port
 DB_DATABASE=InventoryTrackerDB
 DB_USER=your_sql_username
 DB_PASSWORD=your_sql_password
@@ -52,7 +52,7 @@ JWT_SECRET=your_random_secret
 PORT=5000
 ```
 
-Replace `DB_SERVER` and `DB_PORT` with the SQL Server host and TCP port used by your installation. If SQL Server Express is using a dynamic port, find the current port in SQL Server Configuration Manager or assign a fixed TCP port and use that value here.
+Replace `DB_SERVER` and `DB_PORT` with the SQL Server host and TCP port used by your installation. If SQL Server Express is using a dynamic port instead, find the current port in SQL Server Configuration Manager or assign a fixed TCP port and use that value here.
 
 Start the backend server:
 
@@ -98,6 +98,8 @@ Password: test123
 
 ## Challenges Encountered
 
-The main issue I ran into was connecting the backend to SQL Server. I needed to enable TCP/IP and use the correct server port in the backend `.env` file. I also had to enable SQL Server authentication and create a login for the app.
+The main issue I ran into was connecting the backend to SQL Server. I needed to enable TCP/IP and use the correct server port in the backend `.env` file. At first I was using whatever dynamic port SQL Server Express had assigned, which worked, but I realized that port can change after a restart or reinstall. I ended up going into SQL Server Configuration Manager and setting a fixed port instead, so the connection stays reliable.
+
+I also had to enable SQL Server authentication and create a login for the app, since SQL Server only trusts Windows logins by default.
 
 At first, SSMS showed a certificate error, which was fixed by enabling "Trust Server Certificate" in the connection settings.
