@@ -4,7 +4,7 @@ import api from '../api/axios';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-function LowStockReport() {
+function LowStockReport({ refreshKey }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +22,7 @@ function LowStockReport() {
 
   useEffect(() => {
     fetchReport();
-  }, []);
+  }, [refreshKey]);
 
   const downloadPDF = () => {
     const doc = new jsPDF();
@@ -42,9 +42,15 @@ function LowStockReport() {
       title: 'Quantity',
       dataIndex: 'quantity',
       key: 'quantity',
+      align: 'center',
       render: (qty) => <Tag color="red">{qty}</Tag>,
     },
-    { title: 'Threshold', dataIndex: 'low_stock_threshold', key: 'low_stock_threshold' },
+    {
+      title: 'Threshold',
+      dataIndex: 'low_stock_threshold',
+      key: 'low_stock_threshold',
+      align: 'center',
+    },
   ];
 
   return (
@@ -58,6 +64,7 @@ function LowStockReport() {
         dataSource={items}
         loading={loading}
         locale={{ emptyText: 'No low stock items — all good!' }}
+        pagination={{ position: ['bottomCenter'] }}
       />
     </>
   );

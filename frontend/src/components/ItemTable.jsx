@@ -3,7 +3,7 @@ import { Table, Button, message, Space, Popconfirm } from 'antd';
 import api from '../api/axios';
 import ItemFormModal from './ItemFormModal';
 
-function ItemTable() {
+function ItemTable({ onDataChange }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -40,6 +40,7 @@ function ItemTable() {
       await api.delete(`/items/${id}`);
       message.success('Item deleted');
       fetchItems();
+      onDataChange?.();
     } catch (err) {
       message.error('Failed to delete item');
     }
@@ -49,11 +50,18 @@ function ItemTable() {
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'SKU', dataIndex: 'sku', key: 'sku' },
     { title: 'Category', dataIndex: 'category', key: 'category' },
-    { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
-    { title: 'Price', dataIndex: 'price', key: 'price' },
+    { title: 'Quantity', dataIndex: 'quantity', key: 'quantity', align: 'center' },
+    {
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price',
+      align: 'right',
+      render: (price) => `₱${Number(price).toFixed(2)}`,
+    },
     {
       title: 'Actions',
       key: 'actions',
+      align: 'center',
       render: (_, record) => (
         <Space>
           <Button size="small" onClick={() => openEditModal(record)}>Edit</Button>
@@ -80,11 +88,15 @@ function ItemTable() {
         columns={columns}
         dataSource={items}
         loading={loading}
+        pagination={{ position: ['bottomCenter'] }}
       />
       <ItemFormModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSuccess={fetchItems}
+        onSuccess={() => {
+          fetchItems();
+          onDataChange?.();
+        }}
         editingItem={editingItem}
       />
     </>

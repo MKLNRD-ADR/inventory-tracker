@@ -28,7 +28,7 @@ function ItemFormModal({ open, onClose, onSuccess, editingItem }) {
       onSuccess();
       onClose();
     } catch (err) {
-      if (err.errorFields) return; // form validation error, don't show a message
+      if (err.errorFields) return;
       message.error('Something went wrong');
     }
   };
@@ -40,20 +40,20 @@ function ItemFormModal({ open, onClose, onSuccess, editingItem }) {
       onOk={handleOk}
       onCancel={onClose}
     >
-      <Form form={form} layout="vertical">
-        <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-          <Input />
+      <Form form={form} layout="vertical" requiredMark={false}>
+        <Form.Item name="name" label="Name" rules={[{ required: true, message: 'Please enter a name' }]}>
+          <Input placeholder="e.g. Wireless Mouse" />
         </Form.Item>
-        <Form.Item name="sku" label="SKU" rules={[{ required: true }]}>
-          <Input />
+        <Form.Item name="sku" label="SKU" rules={[{ required: true, message: 'Please enter a SKU' }]}>
+          <Input placeholder="e.g. WM-001" />
         </Form.Item>
         <Form.Item name="category" label="Category">
-          <Input />
+          <Input placeholder="e.g. Electronics" />
         </Form.Item>
-        <Form.Item name="quantity" label="Quantity" rules={[{ required: true }]}>
+        <Form.Item name="quantity" label="Quantity" rules={[{ required: true, message: 'Please enter a quantity' }]}>
           <InputNumber style={{ width: '100%' }} min={0} />
         </Form.Item>
-        <Form.Item name="price" label="Price" rules={[{ required: true }]}>
+        <Form.Item name="price" label="Price" rules={[{ required: true, message: 'Please enter a price' }]}>
           <InputNumber style={{ width: '100%' }} min={0} step={0.01} />
         </Form.Item>
         <Form.Item name="low_stock_threshold" label="Low Stock Threshold" initialValue={5}>
