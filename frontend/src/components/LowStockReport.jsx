@@ -110,6 +110,7 @@ function LowStockReport({ refreshKey }) {
         columns={columns}
         dataSource={filteredItems}
         loading={loading}
+        scroll={{ x: 'max-content' }}
         locale={{ emptyText: 'No low stock items — all good!' }}
         pagination={{ placement: ['bottomCenter'] }}
       />

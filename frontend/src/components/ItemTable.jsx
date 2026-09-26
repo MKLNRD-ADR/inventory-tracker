@@ -128,6 +128,7 @@ function ItemTable({ onDataChange }) {
         columns={columns}
         dataSource={filteredItems}
         loading={loading}
+        scroll={{ x: 'max-content' }}
         pagination={{ placement: ['bottomCenter'] }}
       />
       <ItemFormModal
