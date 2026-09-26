@@ -21,12 +21,24 @@ function Dashboard() {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={3} style={{ color: 'white', margin: 0 }}>Inventory Tracker</Title>
+      <Header
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <Title level={3} style={{ color: 'white', margin: 0 }}>
+          Inventory Tracker
+        </Title>
+
         <Button onClick={handleLogout}>Log Out</Button>
       </Header>
+
       <Content style={{ padding: '24px' }}>
-        <Tabs items={tabItems} />
+        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+          <Tabs items={tabItems} />
+        </div>
       </Content>
     </Layout>
   );
