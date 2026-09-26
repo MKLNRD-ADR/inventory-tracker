@@ -8,6 +8,11 @@ A simple inventory management system built for a technical assessment. It lets y
 - Database: MSSQL
 - Auth: JWT + bcrypt
 
+## Prerequisites
+- Node.js (LTS)
+- SQL Server Express (or any MSSQL instance), with an instance name matching your `.env` config
+- SSMS or another way to run SQL scripts (optional but helpful)
+
 ## Setup Instructions
 
 ### 1. Clone the repo
@@ -20,10 +25,10 @@ cd inventory-tracker
 ### 2. Database setup
 Run the SQL in `database/schema.sql` against your MSSQL instance. This creates the `Users` and `Items` tables inside a database called `InventoryTrackerDB`.
 
-You'll also need at least one user in the `Users` table to log in with. Passwords are stored as bcrypt hashes, not plain text, so you can't just insert a plain password directly — hash it first, then insert it like this:
+You'll also need at least one user in the `Users` table to log in with. Passwords are stored as bcrypt hashes, not plain text. You can use this ready-made insert statement, it creates a user `admin` with the password `test123`:
 
 ```sql
-INSERT INTO Users (username, password) VALUES ('admin', 'your_bcrypt_hash_here');
+INSERT INTO Users (username, password) VALUES ('admin', '$2b$10$4eOOEd5el.KAQkvaBaKrOuzS5KMwm6ho9msP5E4Kr9V0MmUbqavpG');
 ```
 
 ### 3. Backend setup
@@ -43,6 +48,8 @@ DB_PASSWORD=your_sql_password
 JWT_SECRET=your_random_secret
 PORT=5000
 ```
+
+Note: if your MSSQL instance isn't named `SQLEXPRESS`, update `DB_SERVER` to match your own instance name.
 
 Start the backend server:
 
