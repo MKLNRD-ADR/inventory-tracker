@@ -91,7 +91,7 @@ Password: test123
 
 ## Challenges Encountered
 
-Biggest headache was the MSSQL connection. Turns out SQL Server Express doesn't use a fixed port, it picks a random one, and something called SQL Server Browser figures out which port to use based on the instance name. Took me a while to understand why my connection string worked without me putting a port anywhere in it.
+The biggest challenge was the MSSQL connection. Turns out SQL Server Express doesn't use a fixed port, it picks a random one, and something called SQL Server Browser figures out which port to use based on the instance name. Took me a while to understand why my connection string worked without me putting a port anywhere in it.
 
 SSMS also wouldn't connect at first, kept throwing a certificate error, until I checked "Trust Server Certificate" in the connection settings.
 
