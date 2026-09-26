@@ -1,5 +1,23 @@
 const { sql, poolPromise } = require('../config/db');
 
+const isDuplicateSkuError = (err) =>
+  err?.number === 2601 ||
+  err?.number === 2627 ||
+  err?.originalError?.number === 2601 ||
+  err?.originalError?.number === 2627;
+
+const handleDatabaseError = (err, res) => {
+  if (isDuplicateSkuError(err)) {
+    return res.status(409).json({
+      message: 'SKU already exists',
+      field: 'sku'
+    });
+  }
+
+  console.error(err);
+  return res.status(500).json({ message: 'Server error' });
+};
+
 const createItem = async (req, res) => {
   const { name, sku, category, quantity, price, low_stock_threshold } = req.body;
 
@@ -20,11 +38,7 @@ const createItem = async (req, res) => {
 
     res.status(201).json({ message: 'Item created successfully' });
   } catch (err) {
-    console.error(err);
-    if (err.number === 2601 || err.number === 2627) {
-      return res.status(409).json({ message: 'SKU already exists' });
-    }
-    res.status(500).json({ message: 'Server error' });
+    return handleDatabaseError(err, res);
   }
 };
 
@@ -39,10 +53,7 @@ const getItems = async (req, res) => {
     res.json(result.recordset);
   } catch (err) {
     console.error(err);
-    if (err.number === 2601 || err.number === 2627) {
-      return res.status(409).json({ message: 'SKU already exists' });
-    }
-    res.status(500).json({ message: 'Server error' });
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -77,8 +88,7 @@ const updateItem = async (req, res) => {
 
     res.json({ message: 'Item updated successfully' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    return handleDatabaseError(err, res);
   }
 };
 

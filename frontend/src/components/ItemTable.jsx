@@ -139,6 +139,7 @@ function ItemTable({ onDataChange }) {
           onDataChange?.();
         }}
         editingItem={editingItem}
+        existingItems={items}
       />
     </>
   );
