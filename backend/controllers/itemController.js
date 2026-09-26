@@ -94,4 +94,29 @@ const deleteItem = async (req, res) => {
   }
 };
 
-module.exports = { createItem, getItems, updateItem, deleteItem };
+const getLowStockReport = async (req, res) => {
+  try {
+    const pool = await poolPromise;
+
+    const result = await pool
+      .request()
+      .query(`
+        SELECT * FROM Items
+        WHERE quantity <= low_stock_threshold
+        ORDER BY quantity ASC
+      `);
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = {
+  createItem,
+  getItems,
+  updateItem,
+  deleteItem,
+  getLowStockReport
+};

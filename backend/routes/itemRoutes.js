@@ -8,8 +8,11 @@ const {
   createItem,
   getItems,
   updateItem,
-  deleteItem
+  deleteItem,
+  getLowStockReport
 } = require('../controllers/itemController');
+
+router.get('/report/low-stock', authMiddleware, getLowStockReport);
 
 router.get('/', authMiddleware, getItems);
 
