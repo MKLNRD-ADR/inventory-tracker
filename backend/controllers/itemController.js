@@ -76,4 +76,22 @@ const updateItem = async (req, res) => {
   }
 };
 
-module.exports = { createItem, getItems, updateItem };
+const deleteItem = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const pool = await poolPromise;
+
+    await pool
+      .request()
+      .input('id', sql.Int, id)
+      .query('DELETE FROM Items WHERE id = @id');
+
+    res.json({ message: 'Item deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { createItem, getItems, updateItem, deleteItem };
