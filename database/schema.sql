@@ -1,0 +1,18 @@
+CREATE TABLE Users (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE Items (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    sku VARCHAR(50) NOT NULL UNIQUE,
+    category VARCHAR(50),
+    quantity INT NOT NULL DEFAULT 0,
+    price DECIMAL(10,2) NOT NULL DEFAULT 0,
+    low_stock_threshold INT NOT NULL DEFAULT 5,
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME DEFAULT GETDATE()
+);
