@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Table, message, Tag } from 'antd';
+import { Table, message, Tag, Button } from 'antd';
 import api from '../api/axios';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 function LowStockReport() {
   const [items, setItems] = useState([]);
@@ -22,6 +24,17 @@ function LowStockReport() {
     fetchReport();
   }, []);
 
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Low Stock Report', 14, 15);
+    autoTable(doc, {
+      startY: 20,
+      head: [['Name', 'SKU', 'Quantity', 'Threshold']],
+      body: items.map((item) => [item.name, item.sku, item.quantity, item.low_stock_threshold]),
+    });
+    doc.save('low-stock-report.pdf');
+  };
+
   const columns = [
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'SKU', dataIndex: 'sku', key: 'sku' },
@@ -35,13 +48,18 @@ function LowStockReport() {
   ];
 
   return (
-    <Table
-      rowKey="id"
-      columns={columns}
-      dataSource={items}
-      loading={loading}
-      locale={{ emptyText: 'No low stock items — all good!' }}
-    />
+    <>
+      <Button onClick={downloadPDF} style={{ marginBottom: 16 }} disabled={items.length === 0}>
+        Download PDF
+      </Button>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={items}
+        loading={loading}
+        locale={{ emptyText: 'No low stock items — all good!' }}
+      />
+    </>
   );
 }
 
