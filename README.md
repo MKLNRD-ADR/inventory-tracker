@@ -10,7 +10,7 @@ A simple inventory management system built for a technical assessment. It lets y
 
 ## Prerequisites
 - Node.js (LTS)
-- SQL Server Express (or any MSSQL instance), with an instance name matching your `.env` config
+- SQL Server Express or another MSSQL instance
 - SSMS or another way to run SQL scripts (optional but helpful)
 
 ## Setup Instructions
@@ -23,7 +23,9 @@ cd inventory-tracker
 ```
 
 ### 2. Database setup
-Run the SQL in `database/schema.sql` against your MSSQL instance. This creates the `Users` and `Items` tables inside a database called `InventoryTrackerDB`.
+Create a database named `InventoryTrackerDB` in SQL Server, then select that database and run the SQL in `database/schema.sql`. The script creates the `Users` and `Items` tables.
+
+For SQL Server Express, make sure TCP/IP is enabled and note the TCP port assigned to your SQL Server instance. The backend connects using the server address and port from the `.env` file.
 
 You'll also need at least one user in the `Users` table to log in with. Passwords are stored as bcrypt hashes, not plain text. You can use this ready-made insert statement, it creates a user `admin` with the password `test123`:
 
@@ -41,7 +43,8 @@ npm install
 Create a `.env` file inside the `backend` folder:
 
 ```env
-DB_SERVER=localhost\SQLEXPRESS
+DB_SERVER=localhost
+DB_PORT=1433
 DB_DATABASE=InventoryTrackerDB
 DB_USER=your_sql_username
 DB_PASSWORD=your_sql_password
@@ -49,7 +52,7 @@ JWT_SECRET=your_random_secret
 PORT=5000
 ```
 
-Note: if your MSSQL instance isn't named `SQLEXPRESS`, update `DB_SERVER` to match your own instance name.
+Replace `DB_SERVER` and `DB_PORT` with the SQL Server host and TCP port used by your installation. If SQL Server Express is using a dynamic port, find the current port in SQL Server Configuration Manager or assign a fixed TCP port and use that value here.
 
 Start the backend server:
 
@@ -60,6 +63,8 @@ npm run dev
 The backend runs on `http://localhost:5000`.
 
 ### 4. Frontend setup
+
+Open a second terminal in the project folder, then run:
 
 ```bash
 cd frontend
@@ -86,19 +91,13 @@ Password: test123
 - Add a new item from the "Items" tab using the "Add Item" button
 - Edit an existing item using the "Edit" button on any row
 - Delete an item using the "Delete" button (asks for confirmation first)
+- Search items by name or SKU and filter them by category
 - Switch to the "Low Stock Report" tab to see items that are at or below their stock threshold
+- Search and filter the low-stock report by name, SKU, or category
 - Click "Download PDF" on the report tab to export it as a PDF file
 
 ## Challenges Encountered
 
-The biggest challenge was the MSSQL connection. Turns out SQL Server Express doesn't use a fixed port, it picks a random one, and something called SQL Server Browser figures out which port to use based on the instance name. Took me a while to understand why my connection string worked without me putting a port anywhere in it.
+The main issue I ran into was connecting the backend to SQL Server. I needed to enable TCP/IP and use the correct server port in the backend `.env` file. I also had to enable SQL Server authentication and create a login for the app.
 
-SSMS also wouldn't connect at first, kept throwing a certificate error, until I checked "Trust Server Certificate" in the connection settings.
-
-Then when I tried hooking up Node to the database, I realized SQL Server only trusts Windows logins by default. My backend needed an actual username and password to connect. Had to go dig through server settings, switch it to "mixed mode" auth, and make a separate SQL login just for the app.
-
-Small but annoying one: I'm used to Command Prompt, so `type nul >` (how I usually make an empty file quickly) didn't work in VS Code's terminal since it defaults to PowerShell. Had to use `New-Item` instead.
-
-Also somehow created my frontend folder in the wrong place at one point. My terminal had cd'd up a level without me realizing, so `npm create vite` ran outside the project folder. Had to move it back in manually.
-
-Everything else, login, CRUD, the report, was pretty straightforward once the environment was actually working.
+At first, SSMS showed a certificate error, which was fixed by enabling "Trust Server Certificate" in the connection settings.
