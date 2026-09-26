@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Table, Button, message } from 'antd';
+import { Table, Button, message, Space } from 'antd';
 import api from '../api/axios';
+import ItemFormModal from './ItemFormModal';
 
 function ItemTable() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
 
   const fetchItems = async () => {
     setLoading(true);
@@ -22,21 +25,51 @@ function ItemTable() {
     fetchItems();
   }, []);
 
+  const openAddModal = () => {
+    setEditingItem(null);
+    setModalOpen(true);
+  };
+
+  const openEditModal = (record) => {
+    setEditingItem(record);
+    setModalOpen(true);
+  };
+
   const columns = [
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'SKU', dataIndex: 'sku', key: 'sku' },
     { title: 'Category', dataIndex: 'category', key: 'category' },
     { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
     { title: 'Price', dataIndex: 'price', key: 'price' },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Space>
+          <Button size="small" onClick={() => openEditModal(record)}>Edit</Button>
+        </Space>
+      ),
+    },
   ];
 
   return (
-    <Table
-      rowKey="id"
-      columns={columns}
-      dataSource={items}
-      loading={loading}
-    />
+    <>
+      <Button type="primary" onClick={openAddModal} style={{ marginBottom: 16 }}>
+        Add Item
+      </Button>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={items}
+        loading={loading}
+      />
+      <ItemFormModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSuccess={fetchItems}
+        editingItem={editingItem}
+      />
+    </>
   );
 }
 
