@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Form, Input, Button, Card, message, Typography } from 'antd';
+import { App as AntdApp, Form, Input, Button, Card, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 
@@ -8,6 +8,7 @@ const { Title, Text } = Typography;
 function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { message } = AntdApp.useApp();
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -41,10 +42,10 @@ function Login() {
 
         <Form onFinish={onFinish} layout="vertical" requiredMark={false}>
           <Form.Item name="username" label="Username" rules={[{ required: true, message: 'Please enter your username' }]}>
-            <Input placeholder="Enter your username" />
+            <Input placeholder="Enter your username" autoComplete="username" />
           </Form.Item>
           <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Please enter your password' }]}>
-            <Input.Password placeholder="Enter your password" />
+            <Input.Password placeholder="Enter your password" autoComplete="current-password" />
           </Form.Item>
           <Button type="primary" htmlType="submit" loading={loading} block>
             Log In

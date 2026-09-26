@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Table, message, Tag, Button, Input, Select, Space } from 'antd';
+import { useCallback, useEffect, useState } from 'react';
+import { App as AntdApp, Table, Tag, Button, Input, Select, Space } from 'antd';
 import api from '../api/axios';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -9,8 +9,9 @@ function LowStockReport({ refreshKey }) {
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [categoryFilter, setCategoryFilter] = useState(undefined);
+  const { message } = AntdApp.useApp();
 
-  const fetchReport = async () => {
+  const fetchReport = useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get('/items/report/low-stock');
@@ -20,7 +21,7 @@ function LowStockReport({ refreshKey }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [message]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -28,7 +29,7 @@ function LowStockReport({ refreshKey }) {
     }, 0);
 
     return () => clearTimeout(timer);
-  }, [refreshKey]);
+  }, [fetchReport, refreshKey]);
 
   const categories = [...new Set(items.map((item) => item.category).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b));
@@ -88,6 +89,9 @@ function LowStockReport({ refreshKey }) {
         <Input
           allowClear
           placeholder="Search name or SKU"
+          id="low-stock-search"
+          name="low-stock-search"
+          autoComplete="off"
           value={searchText}
           onChange={(event) => setSearchText(event.target.value)}
           style={{ width: 220 }}
@@ -107,7 +111,7 @@ function LowStockReport({ refreshKey }) {
         dataSource={filteredItems}
         loading={loading}
         locale={{ emptyText: 'No low stock items — all good!' }}
-        pagination={{ position: ['bottomCenter'] }}
+        pagination={{ placement: ['bottomCenter'] }}
       />
     </>
   );

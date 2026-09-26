@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Table, Button, message, Space, Popconfirm, Input, Select } from 'antd';
+import { useCallback, useEffect, useState } from 'react';
+import { App as AntdApp, Table, Button, Space, Popconfirm, Input, Select } from 'antd';
 import api from '../api/axios';
 import ItemFormModal from './ItemFormModal';
 
@@ -10,8 +10,9 @@ function ItemTable({ onDataChange }) {
   const [editingItem, setEditingItem] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [categoryFilter, setCategoryFilter] = useState(undefined);
+  const { message } = AntdApp.useApp();
 
-  const fetchItems = async () => {
+  const fetchItems = useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get('/items');
@@ -21,7 +22,7 @@ function ItemTable({ onDataChange }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [message]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -29,7 +30,7 @@ function ItemTable({ onDataChange }) {
     }, 0);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [fetchItems]);
 
   const openAddModal = () => {
     setEditingItem(null);
@@ -106,6 +107,9 @@ function ItemTable({ onDataChange }) {
         <Input
           allowClear
           placeholder="Search name or SKU"
+          id="item-search"
+          name="item-search"
+          autoComplete="off"
           value={searchText}
           onChange={(event) => setSearchText(event.target.value)}
           style={{ width: 220 }}
@@ -124,7 +128,7 @@ function ItemTable({ onDataChange }) {
         columns={columns}
         dataSource={filteredItems}
         loading={loading}
-        pagination={{ position: ['bottomCenter'] }}
+        pagination={{ placement: ['bottomCenter'] }}
       />
       <ItemFormModal
         open={modalOpen}
