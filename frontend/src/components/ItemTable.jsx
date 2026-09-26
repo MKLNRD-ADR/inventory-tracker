@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Table, Button, message, Space } from 'antd';
+import { Table, Button, message, Space, Popconfirm } from 'antd';
 import api from '../api/axios';
 import ItemFormModal from './ItemFormModal';
 
@@ -35,6 +35,16 @@ function ItemTable() {
     setModalOpen(true);
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await api.delete(`/items/${id}`);
+      message.success('Item deleted');
+      fetchItems();
+    } catch (err) {
+      message.error('Failed to delete item');
+    }
+  };
+
   const columns = [
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'SKU', dataIndex: 'sku', key: 'sku' },
@@ -47,6 +57,14 @@ function ItemTable() {
       render: (_, record) => (
         <Space>
           <Button size="small" onClick={() => openEditModal(record)}>Edit</Button>
+          <Popconfirm
+            title="Delete this item?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button size="small" danger>Delete</Button>
+          </Popconfirm>
         </Space>
       ),
     },
